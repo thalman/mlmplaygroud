@@ -3,7 +3,7 @@
 int main (int argc, char **argv) {
 
     if (argc < 3) {
-        printf("usage: ./sender tcp://192.168.1.223:9999 myname\n");
+        printf("usage: %s tcp://192.168.1.223:9999 myname\n", argv[0]);
         return 1;
     }
 
