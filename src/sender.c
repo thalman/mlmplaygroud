@@ -80,8 +80,29 @@ int main (int argc, char **argv) {
         return -2;
     }
 
-    while (!zsys_interrupted && (!num_messages || count < num_messages)) {
-        zclock_sleep(interval);
+    zsock_t *pipe = mlm_client_msgpipe (client);
+    if (!pipe) {
+        zsys_error ("mlm_client_msgpipe() failed.");
+        mlm_client_destroy (&client);
+        return -3;
+    }
+
+    zpoller_t *poller = zpoller_new (pipe, NULL);
+    if (!poller) {
+        zsys_error("zpoller_new() failed.");
+        mlm_client_destroy (&client);
+        return -4;
+    }
+
+    while ( !zsys_interrupted && ( !num_messages || count < num_messages) ) {
+        zsock_t *which = zpoller_wait (poller, interval);
+        if ( which != NULL ) {
+            // so we have something to receive
+            zmsg_t *recv_msg = mlm_client_recv (client);
+            zmsg_destroy (&recv_msg);
+        }
+        // in any case we are going to send something
+//        zclock_sleep(interval);
         zmsg_t *msg = zmsg_new();
         assert (msg);
         zmsg_pushstr (msg, "hello");
@@ -96,6 +117,7 @@ int main (int argc, char **argv) {
         zmsg_destroy (&msg);
     }
     mlm_client_destroy(&client);
+    zpoller_destroy(&poller);
     free(endpoint);
     free(name);
     zsys_info ("finished, sent: %u.", count);
