@@ -1,6 +1,7 @@
 #include <malamute.h>
 
 int main (int argc, char **argv) {
+    unsigned int count = 0;
 
     if (argc < 3) {
         printf("usage: %s tcp://192.168.1.223:9999 myname\n", argv[0]);
@@ -33,9 +34,10 @@ int main (int argc, char **argv) {
         zmsg_print(msg);
         mlm_client_send (client, "testing message", &msg);
         zmsg_destroy (&msg);
+        ++count;
     }
     mlm_client_destroy(&client);
-    zsys_info ("finished.");
+    zsys_info ("finished, sent: %u.", count);
     return 0;
 }
 
