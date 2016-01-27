@@ -1,0 +1,10 @@
+# Travis CI script
+
+language: c
+
+sudo: false
+
+env:
+- BUILD_TYPE=default
+
+script: ./ci_build.sh
