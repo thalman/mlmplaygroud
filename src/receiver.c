@@ -17,6 +17,7 @@ int main (int argc, char **argv) {
         mlm_client_destroy (&client);
         return -1;
     }
+    zsys_info ("client is connected");
 
     rv = mlm_client_set_consumer (client, "hello-stream", ".*");
     if (rv == -1) {
@@ -24,13 +25,14 @@ int main (int argc, char **argv) {
     }
     // We don't really need a poller. We just have one client (actor/socket)
     int count = 0;
+    zsys_info ("client is configured");
     while (!zsys_interrupted) {
         zmsg_t *msg = mlm_client_recv (client);
         if (msg) {
             zmsg_destroy (&msg);
             count ++;
             if ( count % 100 == 0 ) {
-                zsys_info ("received %d\n", count);
+                zsys_info ("received %d", count);
             }
         }
     }
