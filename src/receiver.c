@@ -1,4 +1,3 @@
-
 #include <malamute.h>
 
 #define MLM_ENDPOINT "tcp://127.0.0.1:9999"
@@ -12,7 +11,7 @@ int main (int argc, char **argv) {
 
     int rv;
     rv = mlm_client_connect(client, MLM_ENDPOINT, 5000, "receiver");
-    if (rv != 0) {
+    if (rv == -1) {
         zsys_error("connection failed.");
         mlm_client_destroy (&client);
         return -1;
@@ -28,7 +27,7 @@ int main (int argc, char **argv) {
     */
 
     rv = mlm_client_set_consumer (client, "hello-stream", ".*");
-    if (rv != 0) {
+    if (rv == -1) {
         zsys_error ("set_consumer failed.");
     }
     // We don't really need a poller. We just have one client (actor/socket)
