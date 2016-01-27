@@ -36,6 +36,7 @@ int main (int argc, char **argv) {
         zsys_debug ("WAITING");
         zmsg_t *msg = mlm_client_recv (client);
         if (msg) {
+            zsys_info ("sender: %s", mlm_client_sender(client));
             zmsg_print (msg);
             zmsg_destroy (&msg);
         }
