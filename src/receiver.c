@@ -1,43 +1,37 @@
 #include <malamute.h>
 
-#define MLM_ENDPOINT "tcp://127.0.0.1:9999"
-//#define MLM_ENDPOINT "ipc://@/malamute"
-#define AGENT_NAME "tom"
-
 int main (int argc, char **argv) {
+
+    if (argc < 3) {
+        printf("usage: %s tcp://192.168.1.34:9999 myname\n", argv[0]);
+        return 1;
+    }
 
     mlm_client_t *client = mlm_client_new ();
     assert(client);
 
     int rv;
-    rv = mlm_client_connect(client, MLM_ENDPOINT, 5000, "receiver");
+    rv = mlm_client_connect(client, argv[1], 5000, argv[2]);
     if (rv == -1) {
         zsys_error("connection failed.");
         mlm_client_destroy (&client);
         return -1;
     }
 
-    /* I don't produce any messages
-    rv = mlm_client_set_producer (client, "hello-stream");
-    if (rv != 0) {
-        zsys_error("set_producer failed.");
-        mlm_client_destroy (&client);
-        return -2;
-    }
-    */
-
     rv = mlm_client_set_consumer (client, "hello-stream", ".*");
     if (rv == -1) {
         zsys_error ("set_consumer failed.");
     }
     // We don't really need a poller. We just have one client (actor/socket)
+    int count = 0;
     while (!zsys_interrupted) {
-        zsys_debug ("WAITING");
         zmsg_t *msg = mlm_client_recv (client);
         if (msg) {
-            zsys_info ("sender: %s", mlm_client_sender(client));
-            zmsg_print (msg);
             zmsg_destroy (&msg);
+            count ++;
+            if ( count % 100 == 0 ) {
+                zsys_info ("received %d\n", count);
+            }
         }
     }
     mlm_client_destroy(&client);
