@@ -11,3 +11,6 @@ receiver: $(SRC)
 
 producer: $(SRC2)
 	gcc -g -o producer $(SRC2) $(CFLAGS) $(LDFLAGS)
+
+clean:
+	rm -rf receiver producer *.o
