@@ -29,6 +29,11 @@ int main (int argc, char **argv) {
     while (!zsys_interrupted) {
         zmsg_t *msg = mlm_client_recv (client);
         if (msg) {
+            // let's send reply
+            zmsg_t *reply = zmsg_new();
+            assert (reply);
+            mlm_client_sendto (client, mlm_client_sender(client), mlm_client_subject(client), NULL, 1000, &reply);
+            zmsg_destroy (&reply);
             zmsg_destroy (&msg);
             count ++;
             if ( count % 100 == 0 ) {

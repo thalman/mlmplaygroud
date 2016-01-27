@@ -110,11 +110,6 @@ int main (int argc, char **argv) {
         mlm_client_send (client, "testing message", &msg);
         zmsg_destroy (&msg);
         ++count;
-        // let's send reply
-        zmsg_t *reply = zmsg_new();
-        assert (reply);
-        mlm_client_sendto (client, mlm_client_sender(client), mlm_client_subject(client), NULL, 1000, &reply);
-        zmsg_destroy (&msg);
     }
     mlm_client_destroy(&client);
     zpoller_destroy(&poller);
