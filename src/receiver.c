@@ -35,8 +35,10 @@ int main (int argc, char **argv) {
     while (!zsys_interrupted) {
         zsys_debug ("WAITING");
         zmsg_t *msg = mlm_client_recv (client);
-        zmsg_print(msg);
-        zmsg_destroy(&msg);
+        if (msg) {
+            zmsg_print (msg);
+            zmsg_destroy (&msg);
+        }
     }
     mlm_client_destroy(&client);
     zsys_info ("finished.");
