@@ -1,18 +1,60 @@
+
+#include <getopt.h>
 #include <malamute.h>
+
+char *endpoint;
+char *name;
+
+static struct option longopts[] = {
+    { "endpoint",    required_argument,       NULL, 'e' },
+    { "name", required_argument,       NULL, 'n' },
+    { NULL ,    0,         NULL, '\0' }
+};
+
+static void usage(void)
+{
+    fprintf(stderr,
+        "Usage: %s -e | --endpoint tcp://1.2.3.4:5\n"
+        "       -n | --name name of this instance \n",
+        "sender");
+    exit(1);
+}
+
+static void parse_args(int argc, char **argv)
+{
+    int opt;
+
+    while ((opt = getopt_long(argc, argv, "e:n:",
+                  longopts, 0)) != -1) {
+        switch (opt) {
+        case 'e':
+            endpoint = strdup(optarg);
+            break;
+        case 'n':
+            name = strdup(optarg);
+            break;
+
+        default:
+            fprintf(stderr, "Unknown option -%c\n", opt);
+            usage();
+        }
+    }
+}
 
 int main (int argc, char **argv) {
     unsigned int count = 0;
 
-    if (argc < 3) {
-        printf("usage: %s tcp://192.168.1.223:9999 myname\n", argv[0]);
-        return 1;
+    parse_args(argc, argv);
+    if (!endpoint || !name) {
+        zsys_error("endpoint or name not specified.");
+        usage();
     }
 
     mlm_client_t *client = mlm_client_new ();
     assert(client);
 
     int rv;
-    rv = mlm_client_connect(client, argv[1], 5000, argv[2]);
+    rv = mlm_client_connect(client, endpoint, 5000, name);
     if (rv == -1) {
         zsys_error("connection failed.");
         mlm_client_destroy (&client);
@@ -37,6 +79,8 @@ int main (int argc, char **argv) {
         ++count;
     }
     mlm_client_destroy(&client);
+    free(endpoint);
+    free(name);
     zsys_info ("finished, sent: %u.", count);
     return 0;
 }
