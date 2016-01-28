@@ -93,8 +93,8 @@ zyre_actor (zsock_t *pipe, void *args)
             else if (streq (event, "SHOUT")) {
                 const char* uuid = zyre_uuid(node);
                 printf ("received SHOUT from %s: %s\n", name, message);
-                printf ("comparing my UUID %s and peer %s\n", uuid, name, peer);
-                if (strcmp(my_peer, peer) > 0) {
+                printf ("comparing my UUID %s and peer %s\n", uuid, peer);
+                if (strcmp(uuid, peer) > 0) {
                    other_broker_present = true;
                    puts("I should (be) stop(ped) now");
                    if (server) {
