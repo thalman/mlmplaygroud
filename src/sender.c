@@ -73,7 +73,7 @@ int main (int argc, char **argv) {
         return -1;
     }
 
-    rv = mlm_client_set_producer (client, "hello-stream");
+    rv = mlm_client_set_producer (client, "stream");
     if (rv == -1) {
         zsys_error("set_producer failed.");
         mlm_client_destroy (&client);
@@ -105,7 +105,11 @@ int main (int argc, char **argv) {
 //        zclock_sleep(interval);
         zmsg_t *msg = zmsg_new();
         assert (msg);
-        zmsg_pushstr (msg, "hello");
+        if ( count % 10 == 0) { 
+            zmsg_pushstr (msg, "exit");
+        } else {
+            zmsg_pushstr (msg, "hello");
+        }
         zmsg_print(msg);
         mlm_client_send (client, "testing message", &msg);
         zmsg_destroy (&msg);

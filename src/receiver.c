@@ -19,7 +19,7 @@ int main (int argc, char **argv) {
     }
     zsys_info ("client is connected");
 
-    rv = mlm_client_set_consumer (client, "hello-stream", ".*");
+    rv = mlm_client_set_consumer (client, "stream", ".*");
     if (rv == -1) {
         zsys_error ("set_consumer failed.");
     }

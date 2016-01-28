@@ -144,7 +144,7 @@ int
 main (int argc, char *argv[])
 {
     if (argc < 4) {
-        printf ("syntax: %s myname group timeout", argv[0]);
+        printf ("syntax: %s myname group timeout\n", argv[0]);
         exit (0);
     }
     zactor_t *zyreactor = zactor_new (zyre_actor, &argv[1]);
